@@ -22,7 +22,7 @@ def welcome(client, message):
     user_id = user.id
 
     # Download the welcome image
-    image_url = 'https://te.legra.ph/file/6bbe5b22814ea63c37735.png'
+    image_url = 'https://i.postimg.cc/Hsggt1hn/photo-2023-03-20-01-40-46-7212352388177380352.png'
     response = requests.get(image_url)
     with Image.open(requests.get(image_url, stream=True).raw) as image:
         # Open the image and add the text

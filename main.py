@@ -4,10 +4,10 @@ from PIL import Image, ImageDraw, ImageFont
 import telegram
 
 TOKEN = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o'
-FONT_PATH = '/path/to/arial.ttf'
+FONT_NAME = 'arial.ttf'
 
 # Define the font for the welcome message
-font = ImageFont.truetype('arial.ttf', 40)
+font = ImageFont.truetype(FONT_NAME, 40)
 
 def welcome(update, context):
     bot = context.bot
@@ -18,24 +18,20 @@ def welcome(update, context):
 
     # Download the welcome image
     image_url = 'https://te.legra.ph/file/0517921ee0a53c72f28f5.jpg'
-    image_path = '0517921ee0a53c72f28f5.jpg'
     response = requests.get(image_url)
-    with open(image_path, 'wb') as f:
-        f.write(response.content)
+    with Image.open(requests.get(image_url, stream=True).raw) as image:
+        # Open the image and add the text
+        draw = ImageDraw.Draw(image)
+        draw.text((100, 100), f'Welcome {name}!', fill='white', font=font)
+        draw.text((100, 200), f'Username: {username}', fill='white', font=font)
+        draw.text((100, 300), f'ID: {user_id}', fill='white', font=font)
 
-    # Open the image and add the text
-    image = Image.open(image_path)
-    draw = ImageDraw.Draw(image)
-    draw.text((100, 100), f'Welcome {name}!', fill='white', font=font)
-    draw.text((100, 200), f'Username: {username}', fill='white', font=font)
-    draw.text((100, 300), f'ID: {user_id}', fill='white', font=font)
+        # Save the modified image
+        image.save('welcome_modified.jpg')
 
-    # Save the modified image
-    image.save('welcome_modified.jpg')
-
-    # Send the modified image as a reply to the welcome message
-    with open('welcome_modified.jpg', 'rb') as f:
-        bot.send_photo(chat_id=CHAT_ID, photo=f)
+        # Send the modified image as a reply to the welcome message
+        with open('welcome_modified.jpg', 'rb') as f:
+            bot.send_photo(chat_id=update.effective_chat.id, photo=f)
 
 def start(update, context):
     bot = context.bot
@@ -44,10 +40,10 @@ def start(update, context):
 
 def main():
     bot = telegram.Bot(token=TOKEN)
-    updater = telegram.ext.Dispatcher(bot, None, workers=0)
+    updater = telegram.ext.Updater(bot=bot, use_context=True)
 
-    updater.add_handler(CommandHandler('start', start))
-    updater.add_handler(MessageHandler(telegram.ext.Filters.status_update.new_chat_members, welcome))
+    updater.dispatcher.add_handler(CommandHandler('start', start))
+    updater.dispatcher.add_handler(MessageHandler(telegram.ext.Filters.status_update.new_chat_members, welcome))
 
     updater.start_polling()
     updater.idle()

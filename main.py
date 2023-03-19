@@ -66,7 +66,7 @@ def handle_new_chat_members(client, message):
     with open(modified_image_path, 'rb') as f:
         client.send_photo(chat_id=message.chat.id, photo=f)
 
-# Send the modified image as a reply to the welcome message
+        # Send the modified image as a reply to the welcome message
         with open('welcome_modified.jpg', 'rb') as f:
             client.send_photo(chat_id=message.chat.id, photo=f, caption=f'Hello {name}! Welcome to the group.')
         

@@ -38,7 +38,7 @@ def welcome(client, message):
         with open('welcome_modified.jpg', 'rb') as f:
             client.send_photo(chat_id=message.chat.id, photo=f)
 
-@app.on_message(filters.chat_members)
+@app.on_message(filters.new_chat_members)
 def handle_new_chat_members(client, message):
     welcome(client, message)
 

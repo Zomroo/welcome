@@ -1,19 +1,19 @@
 import os
 import requests
 from PIL import Image, ImageDraw, ImageFont
-import telegram
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+import pyrogram
 
-
-TOKEN = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o'
+TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
 FONT_NAME = '/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'
 
 # Define the font for the welcome message
 font = ImageFont.truetype(FONT_NAME, 40)
 
-def welcome(update, context):
-    bot = context.bot
-    user = update.message.new_chat_members[0]
+app = pyrogram.Client('my_bot', bot_token=TOKEN)
+
+def welcome(client, message):
+    bot = client
+    user = message.new_chat_members[0]
     name = user.first_name
     username = user.username
     user_id = user.id
@@ -33,26 +33,19 @@ def welcome(update, context):
 
         # Send the modified image as a reply to the welcome message
         with open('welcome_modified.jpg', 'rb') as f:
-            bot.send_photo(chat_id=update.effective_chat.id, photo=f)
+            bot.send_photo(chat_id=message.chat.id, photo=f)
 
-def start(update, context):
-    bot = context.bot
-    chat_id = update.effective_chat.id
+def start(client, message):
+    bot = client
+    chat_id = message.chat.id
     bot.send_message(chat_id=chat_id, text="Hello! I'm a welcome bot.")
 
-def main():
-    bot = telegram.Bot(token=TOKEN)
-
-    # Start the bot
-    updater = Updater(bot=bot)
-    dispatcher = updater.dispatcher
-
-    # Add handlers
-    dispatcher.add_handler(CommandHandler('start', start))
-    dispatcher.add_handler(MessageHandler(telegram.ext.Filters.status_update.new_chat_members, welcome))
-
-    updater.start_polling()
-    updater.idle()
+@app.on_message()
+def message_handler(client, message):
+    if message.new_chat_members:
+        welcome(client, message)
+    else:
+        start(client, message)
 
 if __name__ == '__main__':
-    main()
+    app.run()

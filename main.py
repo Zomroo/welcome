@@ -2,6 +2,8 @@ import os
 import requests
 from PIL import Image, ImageDraw, ImageFont
 import telegram
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+
 
 TOKEN = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o'
 FONT_NAME = '/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'
@@ -42,7 +44,7 @@ def main():
     bot = telegram.Bot(token=TOKEN)
 
     # Start the bot
-    updater = telegram.ext.Updater(bot=bot)
+    updater = Updater(bot=bot)
     dispatcher = updater.dispatcher
 
     # Add handlers

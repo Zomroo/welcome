@@ -5,6 +5,8 @@ import pyrogram
 from pyrogram import Client, filters
 import pyfiglet
 
+# Define the path to your custom font file
+font_path = os.path.join('fonts', 'CROWNT.ttf')
 
 API_ID = 15849735 # Your API ID
 API_HASH = 'b8105dc4c17419dfd4165ecf1d0bc100' # Your API Hash

@@ -29,9 +29,9 @@ def generate_welcome_image(name, username, user_id):
         draw = ImageDraw.Draw(image)
 
         # Use simple font styles
-        name_text = "Welcome " + name
-        username_text = "Username : @" + username
-        user_id_text = "User ID: " + str(user_id)
+        name_text = f'Welcome {name}!'
+        username_text = f'Username: {username}'
+        user_id_text = f'ID: {user_id}'
 
 
         # Define font and color for the text

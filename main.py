@@ -4,7 +4,8 @@ from PIL import Image, ImageDraw, ImageFont
 import telegram
 
 TOKEN = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o'
-FONT_NAME = 'arial.ttf'
+FONT_NAME = '/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'
+
 
 # Define the font for the welcome message
 font = ImageFont.truetype(FONT_NAME, 40)

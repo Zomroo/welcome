@@ -16,7 +16,7 @@ BOT_TOKEN = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o'
 app = Client("my_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 # Define the font for the welcome message
-font_path = 'fonts/CROWNT.ttf' # Path to your custom font file
+font_path = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf' # Path to your custom font file
 font_size = 70
 
 # Define the welcome image URL
@@ -36,8 +36,8 @@ def generate_welcome_image(name, username, user_id):
 
         # Define font and color for the text
         name_font = ImageFont.truetype(font_path, font_size)
-        username_font = ImageFont.truetype('fonts/CROWNT.ttf', font_size-20)
-        user_id_font = ImageFont.truetype('fonts/CROWNT.ttf', font_size-20)
+        username_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', font_size-20)
+        user_id_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', font_size-20)
         font_color = (241, 196, 15)
 
         # Draw the text on the image

@@ -3,8 +3,7 @@ import requests
 from PIL import Image, ImageDraw, ImageFont
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
-TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
-CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID'
+TOKEN = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o'
 
 # Define the font for the welcome message
 font = ImageFont.truetype('arial.ttf', 40)
@@ -33,7 +32,7 @@ def welcome(bot, update):
     image.save('welcome_modified.jpg')
 
     # Send the modified image as a reply to the welcome message
-    bot.send_photo(chat_id=CHAT_ID, photo=open('welcome_modified.jpg', 'rb'))
+    bot.send_photo(chat_id=update.message.chat_id, photo=open('welcome_modified.jpg', 'rb'))
 
 def main():
     updater = Updater(TOKEN)

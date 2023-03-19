@@ -30,9 +30,9 @@ def generate_welcome_image(name, username, user_id):
         draw = ImageDraw.Draw(image)
         
         # Use pyfiglet to generate cool text with different font styles
-        name_text = pyfiglet.figlet_format(name, font='slant')
-        username_text = pyfiglet.figlet_format(f"@{username}", font='digital')
-        user_id_text = pyfiglet.figlet_format(f"ID: {user_id}", font='bubble')
+        name_text = pyfiglet.figlet_format(name, font='name_font')
+        username_text = pyfiglet.figlet_format(f"@{username}", font='username_font')
+        user_id_text = pyfiglet.figlet_format(f"ID: {user_id}", font='user_id_font')
 
         # Define font and color for the text
         name_font = ImageFont.truetype(font_path, font_size)

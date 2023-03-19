@@ -9,14 +9,15 @@ TOKEN = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o'
 font = ImageFont.truetype('arial.ttf', 40)
 
 def welcome(bot, update):
+    chat_id = update.message.chat_id
     user = update.message.new_chat_members[0]
     name = user.first_name
     username = user.username
     user_id = user.id
 
     # Download the welcome image
-    image_url = 'https://example.com/welcome.jpg'
-    image_path = 'welcome.jpg'
+    image_url = 'https://te.legra.ph/file/0517921ee0a53c72f28f5.jpg'
+    image_path = '0517921ee0a53c72f28f5.jpg'
     response = requests.get(image_url)
     with open(image_path, 'wb') as f:
         f.write(response.content)
@@ -32,14 +33,21 @@ def welcome(bot, update):
     image.save('welcome_modified.jpg')
 
     # Send the modified image as a reply to the welcome message
-    bot.send_photo(chat_id=update.message.chat_id, photo=open('welcome_modified.jpg', 'rb'))
+    bot.send_photo(chat_id=chat_id, photo=open('welcome_modified.jpg', 'rb'))
+
+def start(bot, update):
+    chat_id = update.message.chat_id
+    bot.send_message(chat_id=chat_id, text="Hello! I'm a bot. I can welcome new members to groups.")
 
 def main():
     updater = Updater(TOKEN)
     dp = updater.dispatcher
 
+    # Add handlers
+    dp.add_handler(CommandHandler('start', start))
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, welcome))
 
+    # Start the bot
     updater.start_polling()
     updater.idle()
 

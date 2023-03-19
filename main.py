@@ -1,22 +1,20 @@
 import os
 import requests
 from PIL import Image, ImageDraw, ImageFont
+import pyrogram
 from pyrogram import Client, filters
 
 
-API_ID = 15849735
-API_HASH = 'b8105dc4c17419dfd4165ecf1d0bc100'
-TOKEN = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o'
-FONT_NAME = '/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'
-
-# Define the font for the welcome message
-font = ImageFont.truetype(FONT_NAME, 40)
+API_ID = 15849735 # Your API ID
+API_HASH = 'b8105dc4c17419dfd4165ecf1d0bc100' # Your API Hash
+BOT_TOKEN = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o'
 
 # Create a Pyrogram client
-app = Client("my_bot", api_id=API_ID, api_hash=API_HASH, bot_token=TOKEN)
+app = Client("my_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
+# Define the font for the welcome message
+font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf', 40)
 
-@app.on_message(filters.status_update.new_chat_members)
 def welcome(client, message):
     user = message.new_chat_members[0]
     name = user.first_name
@@ -40,9 +38,13 @@ def welcome(client, message):
         with open('welcome_modified.jpg', 'rb') as f:
             client.send_photo(chat_id=message.chat.id, photo=f)
 
-@app.on_message(filters.command("start"))
+@app.on_message(filters.chat_members)
+def handle_new_chat_members(client, message):
+    welcome(client, message)
+
+@app.on_message(filters.command('start'))
 def start(client, message):
     client.send_message(chat_id=message.chat.id, text="Hello! I'm a welcome bot.")
 
-if __name__ == '__main__':
-    app.run()
+# Start the client
+app.run()

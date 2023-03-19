@@ -1,15 +1,15 @@
 import os
 import requests
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from PIL import Image, ImageDraw, ImageFont
+import telegram
 
 TOKEN = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o'
 
 # Define the font for the welcome message
 font = ImageFont.truetype('arial.ttf', 40)
 
-def welcome(bot, update):
-    chat_id = update.message.chat_id
+def welcome(update, context):
+    bot = context.bot
     user = update.message.new_chat_members[0]
     name = user.first_name
     username = user.username
@@ -33,21 +33,21 @@ def welcome(bot, update):
     image.save('welcome_modified.jpg')
 
     # Send the modified image as a reply to the welcome message
-    bot.send_photo(chat_id=chat_id, photo=open('welcome_modified.jpg', 'rb'))
+    with open('welcome_modified.jpg', 'rb') as f:
+        bot.send_photo(chat_id=CHAT_ID, photo=f)
 
-def start(bot, update):
-    chat_id = update.message.chat_id
-    bot.send_message(chat_id=chat_id, text="Hello! I'm a bot. I can welcome new members to groups.")
+def start(update, context):
+    bot = context.bot
+    chat_id = update.effective_chat.id
+    bot.send_message(chat_id=chat_id, text="Hello! I'm a welcome bot.")
 
 def main():
-    updater = Updater(TOKEN)
-    dp = updater.dispatcher
+    bot = telegram.Bot(token=TOKEN)
+    updater = telegram.ext.Dispatcher(bot, None, workers=0)
 
-    # Add handlers
-    dp.add_handler(CommandHandler('start', start))
-    dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, welcome))
+    updater.add_handler(CommandHandler('start', start))
+    updater.add_handler(MessageHandler(telegram.ext.Filters.status_update.new_chat_members, welcome))
 
-    # Start the bot
     updater.start_polling()
     updater.idle()
 

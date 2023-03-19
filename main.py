@@ -2,7 +2,6 @@ import os
 import requests
 from PIL import Image, ImageDraw, ImageFont
 import pyrogram
-from pyrogram import Client, filters
 import pyfiglet
 
 # Define the path to your custom font file
@@ -13,10 +12,10 @@ API_HASH = 'b8105dc4c17419dfd4165ecf1d0bc100' # Your API Hash
 BOT_TOKEN = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o'
 
 # Create a Pyrogram client
-app = Client("my_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+app = pyrogram.Client("my_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 # Define the font for the welcome message
-font_path = '/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf' # Path to your custom font file
+font_path = '/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'
 font_size = 70
 
 # Define the welcome image URL
@@ -28,16 +27,16 @@ def generate_welcome_image(name, username, user_id):
     with Image.open(requests.get(image_url, stream=True).raw) as image:
         # Open the image and add the text
         draw = ImageDraw.Draw(image)
-        
-        # Use pyfiglet to generate cool text with different font styles
-        name_text = pyfiglet.figlet_format(name, font='name_font')
-        username_text = pyfiglet.figlet_format(f"@{username}", font='username_font')
-        user_id_text = pyfiglet.figlet_format(f"ID: {user_id}", font='user_id_font')
+
+        # Use simple font styles
+        name_text = name
+        username_text = f"@{username}"
+        user_id_text = f"ID: {user_id}"
 
         # Define font and color for the text
         name_font = ImageFont.truetype(font_path, font_size)
-        username_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf', font_size-20)
-        user_id_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf', font_size-20)
+        username_font = ImageFont.truetype(font_path, font_size-20)
+        user_id_font = ImageFont.truetype(font_path, font_size-20)
         font_color = (241, 196, 15)
 
         # Draw the text on the image
@@ -48,11 +47,11 @@ def generate_welcome_image(name, username, user_id):
         # Save the modified image
         modified_image_path = 'images/welcome_modified.jpg'
         image.save(modified_image_path)
-        
+
         return modified_image_path
 
 
-@app.on_message(filters.new_chat_members)
+@app.on_message(pyrogram.filters.new_chat_members)
 def handle_new_chat_members(client, message):
     user = message.new_chat_members[0]
     name = user.first_name
@@ -67,7 +66,7 @@ def handle_new_chat_members(client, message):
         client.send_photo(chat_id=message.chat.id, photo=f)
 
 
-@app.on_message(filters.command('start'))
+@app.on_message(pyrogram.filters.command('start'))
 def start(client, message):
     client.send_message(chat_id=message.chat.id, text="Hello! I'm a welcome bot.")
 

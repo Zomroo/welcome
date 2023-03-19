@@ -20,6 +20,7 @@ def welcome(client, message):
     name = user.first_name
     username = user.username
     user_id = user.id
+    group_name = message.chat.title # get the name of the group where the bot is added
 
     # Download the welcome image
     image_url = 'https://i.postimg.cc/Hsggt1hn/photo-2023-03-20-01-40-46-7212352388177380352.png'
@@ -30,6 +31,7 @@ def welcome(client, message):
         draw.text((100, 100), f'Welcome {name}!', fill='white', font=font)
         draw.text((100, 200), f'Username: {username}', fill='white', font=font)
         draw.text((100, 300), f'ID: {user_id}', fill='white', font=font)
+        draw.text((100, 400), f'Greetings from {group_name}!', fill='white', font=font) # add the group name to the welcome message
 
         # Save the modified image
         image.save('welcome_modified.jpg')

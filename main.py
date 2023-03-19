@@ -39,5 +39,13 @@ def welcome(client, message):
             client.send_photo(chat_id=message.chat.id, photo=f, caption=f'Hello {name}! Welcome to the group.')
 
 
+@app.on_message(filters.new_chat_members)
+def handle_new_chat_members(client, message):
+    welcome(client, message)
+
+@app.on_message(filters.command('start'))
+def start(client, message):
+    client.send_message(chat_id=message.chat.id, text="Hello! I'm a welcome bot.")
+
 # Start the client
 app.run()

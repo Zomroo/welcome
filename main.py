@@ -30,8 +30,8 @@ def generate_welcome_image(name, username, user_id):
 
         # Use simple font styles
         name_text = Welcome name
-        username_text = Username : f"@{username}"
-        user_id_text = User id - f"ID: {user_id}"
+        username_text = "f Username : @{username}"
+        user_id_text = "f User id - ID: {user_id}"
 
         # Define font and color for the text
         name_font = ImageFont.truetype(font_path, font_size)
@@ -65,7 +65,10 @@ def handle_new_chat_members(client, message):
     with open(modified_image_path, 'rb') as f:
         client.send_photo(chat_id=message.chat.id, photo=f)
 
-
+# Send the modified image as a reply to the welcome message
+        with open('welcome_modified.jpg', 'rb') as f:
+            client.send_photo(chat_id=message.chat.id, photo=f, caption=f'Hello {name}! Welcome to the group.')
+        
 @app.on_message(pyrogram.filters.command('start'))
 def start(client, message):
     client.send_message(chat_id=message.chat.id, text="Hello! I'm a welcome bot.")

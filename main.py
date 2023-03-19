@@ -6,7 +6,6 @@ import telegram
 TOKEN = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o'
 FONT_NAME = '/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf'
 
-
 # Define the font for the welcome message
 font = ImageFont.truetype(FONT_NAME, 40)
 
@@ -41,10 +40,14 @@ def start(update, context):
 
 def main():
     bot = telegram.Bot(token=TOKEN)
-    updater = telegram.ext.Updater(bot=bot, use_context=True)
 
-    updater.dispatcher.add_handler(CommandHandler('start', start))
-    updater.dispatcher.add_handler(MessageHandler(telegram.ext.Filters.status_update.new_chat_members, welcome))
+    # Start the bot
+    updater = telegram.ext.Updater(bot=bot)
+    dispatcher = updater.dispatcher
+
+    # Add handlers
+    dispatcher.add_handler(CommandHandler('start', start))
+    dispatcher.add_handler(MessageHandler(telegram.ext.Filters.status_update.new_chat_members, welcome))
 
     updater.start_polling()
     updater.idle()

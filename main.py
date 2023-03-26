@@ -1,53 +1,68 @@
-import os
-import requests
-from PIL import Image, ImageDraw, ImageFont
-import pyrogram
 from pyrogram import Client, filters
+from pyrogram.types import InlineQuery, InlineQueryResultPhoto, User
+from PIL import Image, ImageDraw, ImageFont
+import io
 
+# Bot API credentials
+api_id = 16844842
+api_hash = 'f6b0ceec5535804be7a56ac71d08a5d4'
+bot_token = '6145559264:AAFufTIozcyIRZPf9bRWCvky2_NhbbjWTKU'
 
-API_ID = 15849735 # Your API ID
-API_HASH = 'b8105dc4c17419dfd4165ecf1d0bc100' # Your API Hash
-BOT_TOKEN = '6145559264:AAEkUH_znhpaTdkbnndwP1Vy2ppv-C9Zf4o'
+# Create Pyrogram client and start bot
+bot = Client("my_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 
-# Create a Pyrogram client
-app = Client("my_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
-
-# Define the font for the welcome message
-font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf', 40)
-
-def welcome(client, message):
+# Start the bot and define a handler for new users joining the group
+@bot.on_message(filters.new_chat_members)
+async def new_member_handler(client, message):
+    # Get the user who just joined the group
     user = message.new_chat_members[0]
-    name = user.first_name
-    username = user.username
+
+    # Get user details
     user_id = user.id
-    group_name = message.chat.title # get the name of the group where the bot is added
+    user_name = user.username
+    user_pic = user.photo.big_file_id
+    user_first_name = user.first_name
+    
+    # Initialize user_text to an empty string
+    user_text = ""
 
-    # Download the welcome image
-    image_url = 'https://i.postimg.cc/Hsggt1hn/photo-2023-03-20-01-40-46-7212352388177380352.png'
-    response = requests.get(image_url)
-    with Image.open(requests.get(image_url, stream=True).raw) as image:
-        # Open the image and add the text
-        draw = ImageDraw.Draw(image)
-        draw.text((100, 100), f'Welcome {name}!', fill='white', font=font)
-        draw.text((100, 200), f'Username: {username}', fill='white', font=font)
-        draw.text((100, 300), f'ID: {user_id}', fill='white', font=font)
-        draw.text((100, 400), f'Greetings from {group_name}!', fill='white', font=font) # add the group name to the welcome message
+    # Load user profile picture and resize to 200x200
+    photo_bytes = await client.download_media(user_pic, file_name='process.png', in_memory=True)
+    photo_bytes = bytes(photo_bytes.getbuffer())        
+    photo = Image.open(io.BytesIO(photo_bytes)).resize((200, 200))
 
-        # Save the modified image
-        image.save('welcome_modified.jpg')
+    # Create new image with size 700x300 and white background
+    background = Image.open('/home/gokuinstu2/Wlcom/gettyimages-1127239871-640x640.jpg').resize((700, 300))
+    image = Image.new('RGB', (700, 300))
+    image.paste(background, (0, 0))
 
-        # Send the modified image as a reply to the welcome message
-        with open('welcome_modified.jpg', 'rb') as f:
-            client.send_photo(chat_id=message.chat.id, photo=f, caption=f'Hello {name}! Welcome to the group.')
+    # Create circular mask
+    mask = Image.new('L', photo.size, 0)
+    draw = ImageDraw.Draw(mask)
+    draw.ellipse((0, 0) + photo.size, fill=255)
 
+    # Paste user profile picture on the right side of the image with the circular mask
+    image.paste(photo, (450, 50), mask=mask)
 
-@app.on_message(filters.new_chat_members)
-def handle_new_chat_members(client, message):
-    welcome(client, message)
+    # Add user name to the left half of the image with font size 24 and text limit of 20
+    font = ImageFont.truetype("/home/gokuinstu2/Wlcom/font.otf", 24)
+    draw = ImageDraw.Draw(image)
+    text = user_first_name[:20] if len(user_first_name) > 20 else user_first_name
+    draw.text((100, 120), text, font=font, fill=(0, 0, 0))
 
-@app.on_message(filters.command('start'))
-def start(client, message):
-    client.send_message(chat_id=message.chat.id, text="Hello! I'm a welcome bot.")
+    # Add user name and ID/username to the left half of the image with font size 14
+    font = ImageFont.truetype("/home/gokuinstu2/Wlcom/font.otf", 14)
+    if user_name:
+        user_text = f"{user_name}\n(ID: {user_id})"
+    else:
+        user_text = f"ID: {user_id}"
+    draw.text((100, 170), user_text, font=font, fill=(255, 255, 255))
 
-# Start the client
-app.run()
+    # Save image to a byte stream and send as photo to the group
+    with io.BytesIO() as bio:
+        image.save(bio, "PNG")
+        bio.seek(0)
+        await client.send_photo(chat_id=message.chat.id, photo=bio)
+
+# Start the bot
+bot.run()
